@@ -4,20 +4,48 @@
     android:id="@+id/activity_kx"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="#e5e5e5"
+    android:orientation="vertical"
     tools:context="test.lxy.com.demo.KXActivity">
 
-    <test.lxy.com.demo.MyLineChart
-        android:id="@+id/line_chart_demo"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="2" />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
-    <test.lxy.com.demo.MyBarChart
-        android:id="@+id/bar_chart_demo"
+
+        <Button
+            android:id="@+id/bt_conn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="连接服务器" />
+
+        <Button
+            android:id="@+id/bt_add_data"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:text="添加测试数据" />
+
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <test.lxy.com.demo.MyLineChart
+            android:id="@+id/line_chart_demo"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2" />
+
+        <test.lxy.com.demo.MyBarChart
+            android:id="@+id/bar_chart_demo"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+    </LinearLayout>
 
 </LinearLayout>

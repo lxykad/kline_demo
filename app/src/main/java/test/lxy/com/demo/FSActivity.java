@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.util.SparseArray;
+import android.view.View;
+import android.widget.Button;
 
 import com.alibaba.fastjson.JSON;
 import com.github.mikephil.charting.components.Legend;
@@ -32,8 +34,11 @@ import java.lang.reflect.Type;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import test.lxy.com.demo.bean.FsBean2;
 
 /**
@@ -61,17 +66,43 @@ public class FSActivity extends AppCompatActivity {
 
     private DataParse mData;
 
+    private ArrayList<FsBean2> mList = new ArrayList<>();
+
+
+    //
+    private Button mBtConn;
+    private Button mBtAdd;
+    private Button mBt;
+    private OkHttpClient mClient;
+    //
+    private static final String SOCKET_URL = "";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_kx);
 
+        mBtConn = (Button) findViewById(R.id.bt_conn);
+        mBtAdd = (Button) findViewById(R.id.bt_add_data);
+
+        //创建OkHttpClient 对像
+//        mClient = new OkHttpClient().newBuilder()
+//                .readTimeout(3000, TimeUnit.SECONDS)//设置读取超时时间
+//                .writeTimeout(3000, TimeUnit.SECONDS)//设置写的超时时间
+//                .connectTimeout(3000, TimeUnit.SECONDS)//设置连接超时时间
+//                .build();
+        //
+        //Request request = new Request.Builder().url(SOCKET_URL).build();
+
+        //WebSocketCall webSocketCall = WebSocketCall.create(mOkHttpClient, request);
+
+
+        initEvents();
+
         mData = new DataParse();
         initChart();
-        //开盘时间
-        //stringSparseArray = setXLabels();
 
-        //获取服务器数据
+        //获取服务器历史数据
         loadDataFromServer();
 
         lineChart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
@@ -101,6 +132,29 @@ public class FSActivity extends AppCompatActivity {
 
     }
 
+    //连接服务器等操作
+    private void initEvents() {
+        //add data
+        mBtAdd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+        //连接服务器
+        mBtConn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+
+                //设置webSocket连接,回调
+
+
+            }
+        });
+    }
+
     private void loadDataFromServer() {
 
         OkHttpUtils.get()
@@ -109,7 +163,7 @@ public class FSActivity extends AppCompatActivity {
                 .execute(new StringCallback() {
                     @Override
                     public void onError(Call call, Exception e, int id) {
-                        System.out.println("beanbean222====eee===="+e.toString());
+                        System.out.println("beanbean222====eee====" + e.toString());
                     }
 
                     @Override
@@ -124,9 +178,22 @@ public class FSActivity extends AppCompatActivity {
 //                        list = gson.fromJson(response, type);
 
                         ArrayList<FsBean2> list = (ArrayList<FsBean2>) JSON.parseArray(response, FsBean2.class);
+                        //mList = list;
+                        for (int i = 0; i < 100; i++) {
+                            mList.add(list.get(i));
+//                            mData.parseMinutesData(list);
+//                            setData(mData);
 
-                        mData.parseMinutesData(list);
+//                            try {
+//                                Thread.sleep(200);
+//                            } catch (InterruptedException e) {
+//                                e.printStackTrace();
+//                            }
+
+                        }
+                        mData.parseMinutesData(mList);
                         setData(mData);
+
 
                     }
                 });
@@ -230,16 +297,26 @@ public class FSActivity extends AppCompatActivity {
 
 
     private SparseArray<String> setXLabels() {
-        int count = mData.getDatas().size() - 1;
-        int i = mData.getDatas().size() / 4;
-        int j = mData.getDatas().size() - 4 * i;
-        int rest = 4 * i + j;
+//        int count = mData.getDatas().size() - 1;
+//        int i = mData.getDatas().size() / 4;
+//        int j = mData.getDatas().size() - 4 * i;
+//        int rest = 4 * i + j;
+//        SparseArray<String> xLabels = new SparseArray<>();
+//        xLabels.put(0, "09:30");
+//        xLabels.put(i, "10:30");
+//        xLabels.put(2 * i, "11:30/13:00");
+//        xLabels.put(3 * i, "14:00");
+//        xLabels.put(count, "15:00");
+
+
         SparseArray<String> xLabels = new SparseArray<>();
         xLabels.put(0, "09:30");
-        xLabels.put(i, "10:30");
-        xLabels.put(2 * i, "11:30/13:00");
-        xLabels.put(3 * i, "14:00");
-        xLabels.put(count, "15:00");
+        xLabels.put(60, "10:30");
+        xLabels.put(120, "11:30/13:00");
+        xLabels.put(180 , "14:00");
+        xLabels.put(239, "15:00");
+
+
         return xLabels;
     }
 
@@ -378,7 +455,8 @@ public class FSActivity extends AppCompatActivity {
     }
 
     public String[] getMinutesCount() {
-        return new String[mData.getDatas().size()];
+       // return new String[mData.getDatas().size()];
+        return new String[240];
     }
 
     /*设置量表对齐*/
